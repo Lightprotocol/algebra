@@ -46,6 +46,8 @@ pub mod msm;
 
 pub mod wnaf;
 
+/// Collection of types (mainly fields and curves) that together describe
+/// how to compute a pairing over a pairing-friendly curve.
 pub trait PairingEngine: Sized + 'static + Copy + Debug + Sync + Send + Eq + PartialEq {
     /// This is the scalar field of the G1/G2 groups.
     type Fr: PrimeField + SquareRootField;
@@ -252,9 +254,18 @@ pub trait AffineCurve:
     + for<'a> core::iter::Sum<&'a Self>
     + From<<Self as AffineCurve>::Projective>
 {
+    /// The group defined by this curve has order `h * r`. Here `h` is called
+    /// the `COFACTOR`, and `r` is a large prime such that `Self::ScalarField::MODULUS == r`.
     const COFACTOR: &'static [u64];
+
+    /// The group defined by this curve has order `h * r` where `r` is a large prime.
+    /// `Self::ScalarField` is the prime field defined by `r`
     type ScalarField: PrimeField + SquareRootField + Into<<Self::ScalarField as PrimeField>::BigInt>;
+
+    /// The finite field over which this curve is defined.
     type BaseField: Field;
+
+    /// The projective representation of points on this curve.
     type Projective: ProjectiveCurve<Affine = Self, ScalarField = Self::ScalarField, BaseField = Self::BaseField>
         + From<Self>
         + Into<Self>
@@ -325,6 +336,9 @@ pub fn prepare_g2<E: PairingEngine>(g: impl Into<E::G2Affine>) -> E::G2Prepared 
     E::G2Prepared::from(g)
 }
 
+/// Wrapper trait representing a cycle of elliptic curves (E1, E2) such that
+/// the base field of E1 is the scalar field of E2, and the scalar field of E1
+/// is the base field of E2.
 pub trait CurveCycle
 where
     <Self::E1 as AffineCurve>::Projective: MulAssign<<Self::E2 as AffineCurve>::BaseField>,
@@ -337,6 +351,7 @@ where
     type E2: AffineCurve;
 }
 
+/// A cycle of curves where both curves are pairing-friendly.
 pub trait PairingFriendlyCycle: CurveCycle {
     type Engine1: PairingEngine<
         G1Affine = Self::E1,
