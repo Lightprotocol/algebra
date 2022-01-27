@@ -1,3 +1,4 @@
+// CHECK g2 ec algebra
 use ark_std::{
     io::{Result as IoResult, Write},
     vec::Vec,
@@ -84,7 +85,6 @@ impl<P: BnParameters> From<G2Affine<P>> for G2Prepared<P> {
             z: Fp2::one(),
         };
 
-
         let negq = -q;
 
         for i in (1..P::ATE_LOOP_COUNT.len()).rev() {
@@ -94,19 +94,15 @@ impl<P: BnParameters> From<G2Affine<P>> for G2Prepared<P> {
             match bit {
                 1 => {
                     ell_coeffs.push(addition_step::<P>(&mut r, &q));
-
-                }
+                },
                 -1 => {
                     ell_coeffs.push(addition_step::<P>(&mut r, &negq));
-
-                }
+                },
                 _ => continue,
             }
         }
-        
 
         let q1 = mul_by_char::<P>(q);
-        
 
         let mut q2 = mul_by_char::<P>(q1);
 
@@ -176,7 +172,7 @@ fn doubling_step<B: BnParameters>(
     let j_d = j.double() + &j;
     match B::TWIST_TYPE {
         TwistType::M => (i, j.double() + &j, -h),
-        TwistType::D => (h, j_d, i),        
+        TwistType::D => (h, j_d, i),
     }
 }
 
@@ -184,7 +180,6 @@ fn addition_step<B: BnParameters>(
     r: &mut G2HomProjective<B>,
     q: &G2Affine<B>,
 ) -> EllCoeff<Fp2<B::Fp2Params>> {
-
     // Formula for line function when working with
     // homogeneous projective coordinates.
     let theta = r.y - &(q.y * &r.z);
@@ -212,6 +207,6 @@ fn addition_step<B: BnParameters>(
     let j = theta * &q.x - &(lambda * &q.y);
     match B::TWIST_TYPE {
         TwistType::M => (j, -theta, lambda),
-        TwistType::D => (lambda, -theta, j)
+        TwistType::D => (lambda, -theta, j),
     }
 }
