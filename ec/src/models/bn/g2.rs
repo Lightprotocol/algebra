@@ -42,7 +42,7 @@ pub(crate) type EllCoeff<F> = (F, F, F);
     Copy(bound = "P: BnParameters"),
     Debug(bound = "P: BnParameters")
 )]
-struct G2HomProjective<P: BnParameters> {
+pub struct G2HomProjective<P: BnParameters> {
     pub x: Fp2<P::Fp2Params>,
     pub y: Fp2<P::Fp2Params>,
     pub z: Fp2<P::Fp2Params>,
