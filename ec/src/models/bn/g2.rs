@@ -42,7 +42,7 @@ pub(crate) type EllCoeff<F> = (F, F, F);
     Copy(bound = "P: BnParameters"),
     Debug(bound = "P: BnParameters")
 )]
-struct G2HomProjective<P: BnParameters> {
+pub struct G2HomProjective<P: BnParameters> {
     x: Fp2<P::Fp2Params>,
     y: Fp2<P::Fp2Params>,
     z: Fp2<P::Fp2Params>,
@@ -92,10 +92,10 @@ impl<P: BnParameters> From<G2Affine<P>> for G2Prepared<P> {
             match bit {
                 1 => {
                     ell_coeffs.push(addition_step::<P>(&mut r, &q));
-                }
+                },
                 -1 => {
                     ell_coeffs.push(addition_step::<P>(&mut r, &negq));
-                }
+                },
                 _ => continue,
             }
         }
@@ -124,7 +124,7 @@ impl<P: BnParameters> G2Prepared<P> {
     }
 }
 
-fn mul_by_char<P: BnParameters>(r: G2Affine<P>) -> G2Affine<P> {
+pub fn mul_by_char<P: BnParameters>(r: G2Affine<P>) -> G2Affine<P> {
     // multiply by field characteristic
 
     let mut s = r;
