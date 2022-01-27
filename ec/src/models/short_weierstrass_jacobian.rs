@@ -91,7 +91,6 @@ impl<P: Parameters> GroupAffine<P> {
     /// bit-wise decomposition of the scalar.
     pub(crate) fn mul_bits(&self, bits: impl Iterator<Item = bool>) -> GroupProjective<P> {
         let mut res = GroupProjective::zero();
-        // Skip leading zeros.
         for i in bits.skip_while(|b| !b) {
             res.double_in_place();
             if i {
@@ -542,11 +541,11 @@ impl<P: Parameters> ProjectiveCurve for GroupProjective<P> {
         if other.is_zero() {
             return;
         }
-
         if self.is_zero() {
             self.x = other.x;
             self.y = other.y;
             self.z = P::BaseField::one();
+
             return;
         }
 

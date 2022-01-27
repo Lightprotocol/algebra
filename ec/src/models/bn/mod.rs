@@ -54,7 +54,7 @@ pub struct Bn<P: BnParameters>(PhantomData<fn() -> P>);
 
 impl<P: BnParameters> Bn<P> {
     // Evaluate the line function at point p.
-    fn ell(f: &mut Fp12<P::Fp12Params>, coeffs: &g2::EllCoeff<Fp2<P::Fp2Params>>, p: &G1Affine<P>) {
+    pub fn ell(f: &mut Fp12<P::Fp12Params>, coeffs: &g2::EllCoeff<Fp2<P::Fp2Params>>, p: &G1Affine<P>) {
         let mut c0 = coeffs.0;
         let mut c1 = coeffs.1;
         let mut c2 = coeffs.2;
@@ -65,10 +65,10 @@ impl<P: BnParameters> Bn<P> {
                 c1.mul_assign_by_fp(&p.x);
                 f.mul_by_014(&c0, &c1, &c2);
             }
-            TwistType::D => {
+            TwistType::D => {                
                 c0.mul_assign_by_fp(&p.y);
                 c1.mul_assign_by_fp(&p.x);
-                f.mul_by_034(&c0, &c1, &c2);
+                f.mul_by_034(&c0, &c1, &c2);            
             }
         }
     }
@@ -106,12 +106,11 @@ impl<P: BnParameters> PairingEngine for Bn<P> {
         }
 
         let mut f = Self::Fqk::one();
-
         for i in (1..P::ATE_LOOP_COUNT.len()).rev() {
             if i != P::ATE_LOOP_COUNT.len() - 1 {
                 f.square_in_place();
-            }
 
+            }
             for (p, ref mut coeffs) in &mut pairs {
                 Self::ell(&mut f, coeffs.next().unwrap(), &p.0);
             }
@@ -128,10 +127,11 @@ impl<P: BnParameters> PairingEngine for Bn<P> {
                         Self::ell(&mut f, coeffs.next().unwrap(), &p.0);
                     }
                 }
-                _ => continue,
-            }
+                _ => {
+                    continue
+                }
+            };
         }
-
         if P::X_IS_NEGATIVE {
             f.conjugate();
         }
@@ -145,6 +145,7 @@ impl<P: BnParameters> PairingEngine for Bn<P> {
         }
 
         f
+
     }
 
     #[allow(clippy::let_and_return)]
