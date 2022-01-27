@@ -68,6 +68,8 @@ impl<P: BnParameters> ToBytes for G2Prepared<P> {
 impl<P: BnParameters> From<G2Affine<P>> for G2Prepared<P> {
     fn from(q: G2Affine<P>) -> Self {
         let two_inv = P::Fp::one().double().inverse().unwrap();
+
+        // not used
         if q.is_zero() {
             return Self {
                 ell_coeffs: vec![],
@@ -86,7 +88,6 @@ impl<P: BnParameters> From<G2Affine<P>> for G2Prepared<P> {
 
         for i in (1..P::ATE_LOOP_COUNT.len()).rev() {
             ell_coeffs.push(doubling_step::<P>(&mut r, &two_inv));
-
             let bit = P::ATE_LOOP_COUNT[i - 1];
 
             match bit {
@@ -101,15 +102,20 @@ impl<P: BnParameters> From<G2Affine<P>> for G2Prepared<P> {
         }
 
         let q1 = mul_by_char::<P>(q);
+
         let mut q2 = mul_by_char::<P>(q1);
 
+        // not used
         if P::X_IS_NEGATIVE {
             r.y = -r.y;
         }
 
         q2.y = -q2.y;
-
+        // let r_copy = &r.clone();
         ell_coeffs.push(addition_step::<P>(&mut r, &q1));
+
+        // assert_eq!(&r,r_copy,"r changes its value after each addition");
+
         ell_coeffs.push(addition_step::<P>(&mut r, &q2));
 
         Self {
@@ -159,9 +165,13 @@ fn doubling_step<B: BnParameters>(
     r.x = a * &(b - &f);
     r.y = g.square() - &(e_square.double() + &e_square);
     r.z = b * &h;
+
+    // custom
+    let h = -h;
+    let j_d = j.double() + &j;
     match B::TWIST_TYPE {
         TwistType::M => (i, j.double() + &j, -h),
-        TwistType::D => (-h, j.double() + &j, i),
+        TwistType::D => (h, j_d, i),
     }
 }
 
@@ -172,18 +182,28 @@ fn addition_step<B: BnParameters>(
     // Formula for line function when working with
     // homogeneous projective coordinates.
     let theta = r.y - &(q.y * &r.z);
-    let lambda = r.x - &(q.x * &r.z);
-    let c = theta.square();
-    let d = lambda.square();
-    let e = lambda * &d;
-    let f = r.z * &c;
-    let g = r.x * &d;
-    let h = e + &f - &g.double();
-    r.x = lambda * &h;
-    r.y = theta * &(g - &h) - &(e * &r.y);
-    r.z *= &e;
-    let j = theta * &q.x - &(lambda * &q.y);
 
+    let lambda = r.x - &(q.x * &r.z);
+
+    let c = theta.square();
+
+    let d = lambda.square();
+
+    let e = lambda * &d;
+
+    let f = r.z * &c;
+
+    let g = r.x * &d;
+
+    let h = e + &f - &g.double();
+
+    r.x = lambda * &h;
+
+    r.y = theta * &(g - &h) - &(e * &r.y);
+
+    r.z *= &e;
+
+    let j = theta * &q.x - &(lambda * &q.y);
     match B::TWIST_TYPE {
         TwistType::M => (j, -theta, lambda),
         TwistType::D => (lambda, -theta, j),
