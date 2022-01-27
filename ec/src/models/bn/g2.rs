@@ -124,7 +124,7 @@ impl<P: BnParameters> G2Prepared<P> {
     }
 }
 
-fn mul_by_char<P: BnParameters>(r: G2Affine<P>) -> G2Affine<P> {
+pub fn mul_by_char<P: BnParameters>(r: G2Affine<P>) -> G2Affine<P> {
     // multiply by field characteristic
 
     let mut s = r;
