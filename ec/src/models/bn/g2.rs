@@ -43,9 +43,9 @@ pub(crate) type EllCoeff<F> = (F, F, F);
     Debug(bound = "P: BnParameters")
 )]
 struct G2HomProjective<P: BnParameters> {
-    x: Fp2<P::Fp2Params>,
-    y: Fp2<P::Fp2Params>,
-    z: Fp2<P::Fp2Params>,
+    pub x: Fp2<P::Fp2Params>,
+    pub y: Fp2<P::Fp2Params>,
+    pub z: Fp2<P::Fp2Params>,
 }
 
 impl<P: BnParameters> Default for G2Prepared<P> {
@@ -92,10 +92,10 @@ impl<P: BnParameters> From<G2Affine<P>> for G2Prepared<P> {
             match bit {
                 1 => {
                     ell_coeffs.push(addition_step::<P>(&mut r, &q));
-                }
+                },
                 -1 => {
                     ell_coeffs.push(addition_step::<P>(&mut r, &negq));
-                }
+                },
                 _ => continue,
             }
         }
