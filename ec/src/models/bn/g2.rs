@@ -143,7 +143,7 @@ pub fn mul_by_char<P: BnParameters>(r: G2Affine<P>) -> G2Affine<P> {
     s
 }
 
-fn doubling_step<B: BnParameters>(
+pub fn doubling_step<B: BnParameters>(
     r: &mut G2HomProjective<B>,
     two_inv: &B::Fp,
 ) -> EllCoeff<Fp2<B::Fp2Params>> {
@@ -176,7 +176,7 @@ fn doubling_step<B: BnParameters>(
     }
 }
 
-fn addition_step<B: BnParameters>(
+pub fn addition_step<B: BnParameters>(
     r: &mut G2HomProjective<B>,
     q: &G2Affine<B>,
 ) -> EllCoeff<Fp2<B::Fp2Params>> {
