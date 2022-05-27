@@ -56,7 +56,7 @@ pub struct Bn<P: BnParameters>(PhantomData<fn() -> P>);
 
 impl<P: BnParameters> Bn<P> {
     /// Evaluates the line function at point p.
-    fn ell(f: &mut Fp12<P::Fp12Params>, coeffs: &g2::EllCoeff<Fp2<P::Fp2Params>>, p: &G1Affine<P>) {
+    pub fn ell(f: &mut Fp12<P::Fp12Params>, coeffs: &g2::EllCoeff<Fp2<P::Fp2Params>>, p: &G1Affine<P>) {
         let mut c0 = coeffs.0;
         let mut c1 = coeffs.1;
         let mut c2 = coeffs.2;
@@ -75,7 +75,7 @@ impl<P: BnParameters> Bn<P> {
         }
     }
 
-    fn exp_by_neg_x(mut f: Fp12<P::Fp12Params>) -> Fp12<P::Fp12Params> {
+    pub fn exp_by_neg_x(mut f: Fp12<P::Fp12Params>) -> Fp12<P::Fp12Params> {
         f = f.cyclotomic_exp(&P::X);
         if !P::X_IS_NEGATIVE {
             f.conjugate();
