@@ -16,7 +16,7 @@ build = "build.rs"
 [dependencies]
 ark-ff-asm = { version = "^0.3.0", path = "../ff-asm" }
 ark-ff-macros = { version = "^0.3.0", path = "../ff-macros" }
-ark-std = { version = "^0.3.0",path = "../../ark-std", default-features = false }
+ark-std ={ version= "=0.3.0", default-features = false, git="https://github.com/Lightprotocol/ark-std" , tag="alt_bn128" }
 ark-serialize = { version = "^0.3.0", path = "../serialize", default-features = false }
 derivative = { version = "2", features = ["use_core"] }
 num-traits = { version = "0.2"}
