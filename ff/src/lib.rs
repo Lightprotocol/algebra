@@ -4,6 +4,7 @@
 #![cfg_attr(not(feature = "asm"), forbid(unsafe_code))]
 #![cfg_attr(use_asm, feature(llvm_asm))]
 #![cfg_attr(feature = "asm", deny(unsafe_code))]
+#![allow(elided_lifetimes_in_paths)]
 
 #[macro_use]
 extern crate ark_std;
